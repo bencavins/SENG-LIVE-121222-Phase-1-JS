@@ -20,6 +20,7 @@ function renderStoreSelectionOptions(stores) {
   stores.forEach(addSelectOptionForStore)
   // add a listener so that when the selection changes, we fetch that store's data from the server and load it into the DOM
   storeSelector.addEventListener('change', (e) => {
+    console.log(e.target.value)
     getJSON(`http://localhost:3000/stores/${e.target.value}`)
       .then(store => {
         renderHeader(store);
@@ -169,13 +170,43 @@ bookForm.addEventListener('submit', (e) => {
     imageUrl: e.target.imageUrl.value
   }
   // pass the info as an argument to renderBook for display!
-  renderBook(book);
+  // renderBook(book);
   // 1. Add the ability to perist the book to the database when the form is submitted. When this works, we should still see the book that is added to the DOM on submission when we refresh the page.
+  fetch('http://localhost:3000/books', {
+    method: 'POST',
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(book)
+  })
+    .then(resp => resp.json())
+    .then(newBook => console.log(newBook))
 
   e.target.reset();
 })
 
 // 2. Hook up the new Store form so it that it works to add a new store to our database and also to the DOM (as an option within the select tag)
+storeForm.addEventListener('submit', (event) => {
+    event.preventDefault()
+    // console.log(typeof event.target.number.value)
+    const newStore = {
+      "location": event.target.location.value,
+      "address": event.target.address.value,
+      "number": parseInt(event.target.number.value),
+      "name": event.target.name.value,
+      "hours": event.target.hours.value
+    }
+    // console.log(newStore)
+    fetch('http://localhost:3000/stores', {
+        method: 'POST',
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(newStore)
+    }).then(resp => console.log(resp))
+
+    
+})
 
 
 // Invoking functions    
@@ -193,8 +224,15 @@ getJSON('http://localhost:3000/stores')
   });
 
 // load all the books and render them
-getJSON("http://localhost:3000/books")
-  .then((books) => {
-    books.forEach(book => renderBook(book))
-  })
-  .catch(renderError);
+// getJSON("http://localhost:3000/books")
+//   .then((books) => {
+//     books.forEach(book => renderBook(book))
+//   })
+//   .catch(renderError);
+
+fetch('http://localhost:3000/books')
+    .then(resp => resp.json())
+    .then(books => {
+        books.forEach(book => renderBook(book))
+    })
+    .catch(renderError);

@@ -23,6 +23,14 @@
       "number": 5554443333,
       "name": "Tech BooksRus",
       "hours": "Thursday - Saturday 11am - 7pm"
+    },
+    {
+      "location": "hjklhjl",
+      "address": "123 mailn",
+      "number": 555555555,
+      "name": "my ramen",
+      "hours": "908",
+      "id": 4
     }
   ],
   "books": [
@@ -135,6 +143,60 @@
       ],
       "inventory": 20,
       "imageUrl": "https://images-na.ssl-images-amazon.com/images/I/41oYsXjLvZL._SY344_BO1,204,203,200_.jpg"
+    },
+    {
+      "title": "my book",
+      "author": "joe ",
+      "price": 1234567,
+      "reviews": [],
+      "inventory": 0,
+      "imageUrl": "https://t4.ftcdn.net/jpg/03/03/62/45/360_F_303624505_u0bFT1Rnoj8CMUSs8wMCwoKlnWlh5Jiq.jpg",
+      "id": 8
+    },
+    {
+      "title": "45678",
+      "author": "5678",
+      "price": 6789,
+      "reviews": [],
+      "inventory": 678,
+      "imageUrl": "678",
+      "id": 9
+    },
+    {
+      "title": "",
+      "author": "",
+      "price": null,
+      "reviews": [],
+      "inventory": 0,
+      "imageUrl": "",
+      "id": 10
+    },
+    {
+      "title": "",
+      "author": "",
+      "price": null,
+      "reviews": [],
+      "inventory": 0,
+      "imageUrl": "",
+      "id": 11
+    },
+    {
+      "title": "",
+      "author": "",
+      "price": null,
+      "reviews": [],
+      "inventory": 0,
+      "imageUrl": "",
+      "id": 12
+    },
+    {
+      "title": "",
+      "author": "",
+      "price": null,
+      "reviews": [],
+      "inventory": 0,
+      "imageUrl": "",
+      "id": 13
     }
   ]
 }
