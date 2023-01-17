@@ -10,6 +10,8 @@ function renderFooter(bookStore) {
   document.querySelector('#store').textContent = bookStore.location;
 }
 
+let currentStoreId;
+
 // adds options to a select tag that allows swapping between different stores
 function renderStoreSelectionOptions(stores) {
   // target the select tag
@@ -24,6 +26,7 @@ function renderStoreSelectionOptions(stores) {
       .then(store => {
         renderHeader(store);
         renderFooter(store);
+        currentStoreId = e.target.value
       })
   })
 }
@@ -68,6 +71,20 @@ function renderBook(book) {
   inventoryInput.className = 'inventory-input';
   inventoryInput.value = book.inventory;
   inventoryInput.min = 0;
+  inventoryInput.addEventListener('change', (event) => {
+      console.log('new input is ' + inventoryInput.value)
+      fetch(`http://localhost:3000/books/${book.id}`, {
+          method: 'PATCH',
+          headers: {
+              'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+              "inventory": inventoryInput.value
+          })
+        })
+        .then(resp => resp.json())
+        .then(updatedBook => console.log(updatedBook))
+  })
   
   const pStock = document.createElement('p');
   pStock.className = "grey";
@@ -87,7 +104,19 @@ function renderBook(book) {
   btn.textContent = 'Delete';
 
   btn.addEventListener('click', (e) => {
-    li.remove();
+      fetch(`http://localhost:3000/books/${book.id}`, {
+          method: 'DELETE'
+      })
+        .then(resp => {
+           if (resp.ok) {
+            console.log('delete success')
+           } else {
+            console.log('delete fail')
+           }
+        })
+        .catch(error => console.log(error))
+      
+      li.remove()
   })
 
   li.append(h3, pAuthor, pPrice, inventoryInput, pStock, img, btn);
@@ -236,8 +265,18 @@ storeForm.addEventListener('submit', (e) => {
   //     "hours": "Monday - Friday 9am - 6pm"
   //   },
   if (storeEditMode) {
+    console.log(store, currentStoreId)
     // ✅ write code for updating the store here
-    
+    fetch(`http://localhost:3000/stores/${currentStoreId}`, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(store)
+    })
+      .then(resp => resp.json())
+      .then(updatedStore => whatever(updatedStore))
+
     hideStoreForm()
   } else {
     postJSON("http://localhost:3000/stores", store)
@@ -246,6 +285,17 @@ storeForm.addEventListener('submit', (e) => {
   }
   e.target.reset();
 })
+
+
+function whatever(updatedStore) {
+    console.log(updatedStore)
+    renderHeader(updatedStore)
+    renderFooter(updatedStore)
+    
+    // TODO rerender store dropdown
+    getJSON('http://localhost:3000/stores')
+      .then(storeList => renderStoreSelectionOptions(storeList))
+}
 
 // edit store button
 const editStoreBtn = document.querySelector('#edit-store');
@@ -269,6 +319,9 @@ getJSON('http://localhost:3000/stores')
     renderStoreSelectionOptions(stores);
     renderHeader(stores[0])
     renderFooter(stores[0])
+    // console.log('first store: ')
+    // console.log(stores[0])
+    currentStoreId = stores[0].id 
   })
   .catch(err => {
     console.error(err);

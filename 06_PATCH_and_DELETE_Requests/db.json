@@ -2,18 +2,18 @@
   "stores": [
     {
       "id": 1,
-      "location": "Seattle",
+      "location": "LA",
       "address": "333 st ne Seattle wa 99999",
-      "number": 9999999999,
+      "number": "9999999999",
       "name": "Easley's Technical Books",
       "hours": "Monday - Friday 9am - 6pm"
     },
     {
       "id": 2,
-      "location": "New York",
+      "location": "LA",
       "address": "555 pl sw NY 10099",
-      "number": 1110009999,
-      "name": "Coding Books and more!",
+      "number": "234567890",
+      "name": "Coding Books and more",
       "hours": "Monday - Friday 10am - 9pm"
     },
     {
@@ -51,7 +51,7 @@
           "content": "good way to learn JQuery"
         }
       ],
-      "inventory": 2,
+      "inventory": "8",
       "imageUrl": "https://images-na.ssl-images-amazon.com/images/I/31SRWF+LkKL._SX398_BO1,204,203,200_.jpg"
     },
     {
@@ -71,24 +71,6 @@
       ],
       "inventory": 8,
       "imageUrl": "https://images-na.ssl-images-amazon.com/images/I/5131OWtQRaL._SX218_BO1,204,203,200_QL40_FMwebp_.jpg"
-    },
-    {
-      "id": 4,
-      "title": "JavaScript: The Definitive Guide",
-      "author": "David Flanagan",
-      "price": 25.5,
-      "reviews": [
-        {
-          "userID": 44,
-          "content": "Great intro to js book"
-        },
-        {
-          "userID": 350,
-          "content": "It really is the Definitive guide"
-        }
-      ],
-      "inventory": 0,
-      "imageUrl": "https://images-na.ssl-images-amazon.com/images/I/51wijnc-Y8L._SX379_BO1,204,203,200_.jpg"
     },
     {
       "id": 5,
