@@ -68,6 +68,28 @@ function renderBook(book) {
   inventoryInput.className = 'inventory-input';
   inventoryInput.value = book.inventory;
   inventoryInput.min = 0;
+
+  inventoryInput.addEventListener('change', event => {
+    fetch(`http://localhost:3000/books/${book.id}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        'inventory': event.target.value
+      })
+    })
+    .then(resp => resp.json())
+    .then(data => {
+      if (data.inventory <= 0) {
+        pStock.textContent = "Out of stock";
+      } else if (data.inventory < 3) {
+        pStock.textContent = "Only a few left!";
+      } else {
+        pStock.textContent = "In stock"
+      }
+    })
+  })
   
   const pStock = document.createElement('p');
   pStock.className = "grey";
@@ -87,6 +109,12 @@ function renderBook(book) {
   btn.textContent = 'Delete';
 
   btn.addEventListener('click', (e) => {
+    fetch(`http://localhost:3000/books/${book.id}`, {
+      method: 'DELETE'
+    })
+    .then(resp => resp.json())
+    .then(data => {
+    })
     li.remove();
   })
 
