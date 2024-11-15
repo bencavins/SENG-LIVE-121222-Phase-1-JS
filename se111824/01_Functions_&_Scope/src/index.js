@@ -79,7 +79,23 @@ const inventory = [
 */
 
 // Start here!
+function helloWorld() {
+  console.log('hello, world!')
+}
 
+const helloWorldArrow = () => {
+  console.log('hello, world!')
+}
+
+function formatPrice(price) {
+  return `$${price}`
+}
+
+
+const firstBook = inventory[0]
+function blurb(book) {
+  return `${book.title}, ${formatPrice(book.price)}`
+}
 
 
 
@@ -97,11 +113,24 @@ const inventory = [
 // 💡 Difference between Block scope, Function scope, and Global scope
 
 // ✅ create a variable `highestPricedBook`
-
+let highestPricedBook = 'not sure'
 
 
 // ✅ create a function `findHighestPricedBook` that finds that book and returns it
+function findHighestPricedBook(books) {
+  let highestPrice = 0
+  for (let i = 0; i < books.length; i++) {
+    const currentBook = books[i]
+    if (currentBook.price > highestPrice) {
+      highestPricedBook = currentBook.title
+      highestPrice = currentBook.price
+    }
+  }
+}
 
+findHighestPricedBook(inventory)
+
+console.log(highestPricedBook)
 
 
 // After Break
@@ -112,18 +141,32 @@ const inventory = [
 
 // 💡 Practice using callbacks for iteration
 
+function executeFunction(func, arg1, arg2) {
+  console.log(`running ${func}(${arg1}, ${arg2})`)
+  return func(arg1, arg2)
+}
+
+const result = executeFunction((x, y) => {return x+y}, 5, 6)
+// console.log(result)
+
 
 
 // ✅ Create an array of the prices of all of the books
+const prices = inventory.map((book) => {return book.price})
+console.log(prices)
 
 
 
 // ✅ Create an array of simplified book objects
+prices.forEach((price) => {console.log(`$${price}`)})
 
 
 
 // ✅ Create an array of strings from the inventory in the following format:
 // 'Eloquent JavaScript: A Modern Introduction to Programming by Marjin Haverbeke is on sale for $10.00'
-
+const blurbs = inventory.map((book) => {
+  return `${blurb(book)}`
+})
+console.log(blurbs)
 
 // 💡 When do I use forEach vs map?
