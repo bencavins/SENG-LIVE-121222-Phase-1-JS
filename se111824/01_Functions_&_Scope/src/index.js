@@ -1,3 +1,9 @@
+// variables (let, const, var)
+
+// data types
+
+// conditionals
+
 //Data 
 const inventory = [
   {
