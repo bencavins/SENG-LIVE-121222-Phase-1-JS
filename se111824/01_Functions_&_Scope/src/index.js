@@ -1,8 +1,41 @@
 // variables (let, const, var)
+const x = 1  // create a constant called x, give it the value 1
+let y = 0  // create a variable called y, give it the value 0
+console.log(x, y)  // print the value of x and y
+console.log('hello world!')
+
+y = 99
+console.log(x, y)  // print the value of x and y
+
+var z = 77  // don't use this one
+
+// const array = [1, 2, 3]
+// console.log(array)
+// array[0] = 99
+// console.log(array)
 
 // data types
+const myNumber = 123
+console.log(typeof myNumber)
+const myString = "hello"
+console.log(typeof myString)
+const myBoolean = true
+console.log(typeof myBoolean)
+const myArray = [1, 2, 3]
+console.log(typeof myArray)
+const myObject = {"name": "bob", "age": 50}
+console.log(typeof myObject)
 
 // conditionals
+let weather = 'snow'
+if (weather === 'sunny') {
+  console.log("nice day")
+} else if (weather === 'rain') {
+  console.log("bring an umbrella")
+} else {
+  console.log("I don't know")
+}
+
 
 //Data 
 const inventory = [
