@@ -1,38 +1,28 @@
 // variables (let, const, var)
 const x = 1  // create a constant called x, give it the value 1
 let y = 0  // create a variable called y, give it the value 0
-console.log(x, y)  // print the value of x and y
-console.log('hello world!')
+y = 99  // we can change y 
+// x = 99  // we are not allowed to change x
 
-y = 99
-console.log(x, y)  // print the value of x and y
-
-var z = 77  // don't use this one
-
-// const array = [1, 2, 3]
-// console.log(array)
-// array[0] = 99
-// console.log(array)
-
-// data types
+// common data types
 const myNumber = 123
-console.log(typeof myNumber)
+// console.log(typeof myNumber)
 const myString = "hello"
-console.log(typeof myString)
+// console.log(typeof myString)
 const myBoolean = true
-console.log(typeof myBoolean)
+// console.log(typeof myBoolean)
 const myArray = [1, 2, 3]
-console.log(typeof myArray)
+// console.log(typeof myArray)
 const myObject = {"name": "bob", "age": 50}
-console.log(typeof myObject)
+// console.log(typeof myObject)
 
 // conditionals
 let weather = 'snow'
-if (weather === 'sunny') {
+if (weather === 'sunny') {  // this condition is checked first
   console.log("nice day")
-} else if (weather === 'rain') {
+} else if (weather === 'rain') {  // this is checked next
   console.log("bring an umbrella")
-} else {
+} else {  // this only runs if all the above conditions are false
   console.log("I don't know")
 }
 
@@ -104,59 +94,82 @@ const inventory = [
   }
 ]
 
-// ✅ Function ideas:
-/*
-- helloWorld
-- formatPrice(price)
-- blurb(book)
-*/
+// a function has 3 parts:
+// - name (optional for arrow functions)
+// - parameters (or arguments)
+// - body (code block)
 
-// Start here!
+// defining a function
+function helloWorld() {
+  console.log('Hello, world!')
+}
+helloWorld()  // functions don't run until you call them
 
+// example of an arrow function
+const helloWorldArrow = () => {
+  console.log('Hello, arrow world!')
+}
 
+// handy formatPrice function
+function formatPrice(price) {
+  return "$" + price.toFixed(2)
+}
 
-
-// 💡 Arrow functions vs regular functions
-
-// ✅ create an arrow function version of the formatPrice function
-
-
-
-// ✅ create a blurb() function that accepts a book as an argument and logs a message in the following format:
-// 'Eloquent JavaScript: A Modern Introduction to Programming by Marjin Haverbeke is on sale for $10.00'
-
-
-
-// 💡 Difference between Block scope, Function scope, and Global scope
-
-// ✅ create a variable `highestPricedBook`
-
-
-
-// ✅ create a function `findHighestPricedBook` that finds that book and returns it
+let myGlobal = 'hi'  // global variables can be accessed from anywhere
+const formatPriceArrow = (price) => {
+  const formattedPrice = "$" + price.toFixed(2)
+  myGlobal = formattedPrice  // allowed to change global variable in function
+  return formattedPrice
+}
+// we cannot access formattedPrice outside of function
 
 
-
-// After Break
-
-// ✅ Create a function called `log` that takes a function and its argument as arguments
-// and logs a message explaining the name of the function, the argument passed and 
-// the return value 
-
-// 💡 Practice using callbacks for iteration
-
+// a function that summarizes some info for a book
+function blurb(book) {
+  return `${book.title} by ${book.author}, ${formatPrice(book.price)}`
+}
+// console.log(blurb(inventory[0]))
+// console.log(blurb(inventory[1]))
+// console.log(blurb(inventory[2]))
 
 
-// ✅ Create an array of the prices of all of the books
+// we can pass functions into other functions as arguments
+// these are called callback functions
+function execFunc(func, arg1, arg2) {
+  console.log(`calling func with ${arg1}, ${arg2}`)
+  return func(arg1, arg2)
+}
+
+const myFunc = (x, y) => {return x + y + z}
+console.log(execFunc(myFunc, 5, 3))
 
 
+const nums = [1, 2, 3, 4]
+// .forEach() can be used to run some code for every item in an array
+nums.forEach((x) => {console.log(x)})
+// .map() can be used to transform each item in an array
+// and put it inside a new one
+const doubles = nums.map((x) => {return x*2})
+console.log(doubles)  // [2, 4, 6, 8]
 
-// ✅ Create an array of simplified book objects
+// create an array that only contains the prices for the books
+const prices = inventory.map((book) => {return book.price})
 
+// use .forEach() to iterate over all prices and calcuate an average
+let total = 0
+let count = 0
+prices.forEach(price => {
+  total = total + price // total += price
+  count = count + 1  // count += 1
+})
+const avg = total / count
 
-
-// ✅ Create an array of strings from the inventory in the following format:
-// 'Eloquent JavaScript: A Modern Introduction to Programming by Marjin Haverbeke is on sale for $10.00'
-
+// create an array of blurbs for each book in inventory
+const blurbs = inventory.map((book) => {return blurb(book)})
 
 // 💡 When do I use forEach vs map?
+// .forEach() is useful if we want to run a function for each
+// item in an array
+
+// .map() is useful if we want to transform everything in the
+// original array and put it inside a new one
