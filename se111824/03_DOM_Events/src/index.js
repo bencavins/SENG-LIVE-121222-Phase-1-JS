@@ -47,11 +47,15 @@ function renderBook(book) {
   img.alt = `${book.title} cover`;
 
   const btn = document.createElement('button');
+  btn.setAttribute('id', book.id)
   btn.textContent = 'Delete';
-  btn.addEventListener('click', (event) => {
-    console.log('you clicked!')
-    li.remove()
 
+  // regsiter a click event on the button
+  btn.addEventListener('click', (event) => {
+    // this code runs every time the event happens
+    console.log('deleting', event.target)
+    // remove this li from the page
+    li.remove()
   })
 
   li.append(h3, pAuthor, pPrice, img, btn);
@@ -73,13 +77,33 @@ bookStore.inventory.forEach(renderBook);
 //   renderBook(book)
 // }
 
-// for (let book of bookStore.inventory) {}
+// for (let book of bookStore.inventory) {
+//   renderBook(book)
+// }
 
 
+// select the new book button
 const newBookBtn = document.querySelector('#toggleForm')
+// add a click event to the button
 newBookBtn.addEventListener('click', (event) => {
+  // select the form element
   const form = document.querySelector('#book-form')
-  if (form.className === 'collapsed') {
+
+  // toggle the form by manipulating the class attribute
+
+  // solution 1
+  // replace the class attribute completely
+  // if (form.className === 'collapsed') {
+  //   form.setAttribute('class', '')  // <form class="">
+  //   newBookBtn.textContent = 'Collapse Form'
+  // } else {
+  //   form.setAttribute('class', 'collapsed')  // <form class="collapsed">
+  //   newBookBtn.textContent = 'New Book'
+  // }
+  
+  // solution 2 (a little safer)
+  // add/remove the string "collapsed" from the class attribute
+  if (form.classList.contains('collapsed')) {
     form.classList.remove('collapsed')
     newBookBtn.textContent = 'Collapse Form'
   } else {
@@ -88,31 +112,45 @@ newBookBtn.addEventListener('click', (event) => {
   }
 })
 
-
+// select the form
 const bookForm = document.querySelector('#book-form')
+// add a submit event to the form
 bookForm.addEventListener('submit', (event) => {
-  event.preventDefault()
-  const title = document.querySelector('#form-title')
-  console.log(title.value)
-  const author = document.querySelector('#form-author')
-  console.log(author.value)
-  const price = document.querySelector('#form-price')
-  console.log(parseInt(price.value))
-  const img = document.querySelector('#form-imageUrl')
-  console.log(img.value)
-  const inventory = document.querySelector('#form-inventory')
-  console.log(inventory.value)
+  event.preventDefault()  // prevent the page from reloading
+  
 
+  // option 1, query select all input elements, grab value
+  // const title = document.querySelector('#form-title')
+  // console.log(title.value)
+  // const author = document.querySelector('#form-author')
+  // console.log(author.value)
+  // const price = document.querySelector('#form-price')
+  // console.log(parseInt(price.value))
+  // const img = document.querySelector('#form-imageUrl')
+  // console.log(img.value)
+  // const inventory = document.querySelector('#form-inventory')
+  // console.log(inventory.value)
+
+  // option 2, grab input data from event.target
+  console.log(event.target.title.value)
+  console.log(event.target.author.value)
+  console.log(event.target.price.value)
+  console.log(event.target.imageUrl.value)
+  console.log(event.target.inventory.value)
+
+  // build a new book object
   const newBook = {
       // id:1,
-      title: title.value,
-      author: author.value,
-      price: parseInt(price.value),
+      title: event.target.title.value,
+      author: event.target.author.value,
+      price: parseFloat(event.target.price.value),
       // reviews: [{userID: 1, content:'Good book, but not great for new coders'}],
-      inventory: inventory.value,
-      imageUrl: img.value
+      inventory: event.target.inventory.value,
+      imageUrl: event.target.imageUrl.value
   }
-  renderBook(newBook)
-  bookForm.reset()
 
+  // render the new book on the page
+  renderBook(newBook)
+  // clear all the inputs from the form
+  bookForm.reset()
 })
