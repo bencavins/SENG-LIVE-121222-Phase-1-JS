@@ -51,7 +51,6 @@ function renderBook(book) {
   btn.addEventListener('click', (event) => {
     console.log('you clicked!')
     li.remove()
-
   })
 
   li.append(h3, pAuthor, pPrice, img, btn);
@@ -66,18 +65,15 @@ function renderBook(book) {
 
 renderHeader(bookStore);
 renderFooter(bookStore);
-bookStore.inventory.forEach(renderBook);
 
-// for (let i = 0; i < bookStore.inventory.length; i++) {
-//   const book = bookStore.inventory[i]
-//   renderBook(book)
-// }
+for (let book of bookStore.inventory) {
+  renderBook(book)
+}
 
-// for (let book of bookStore.inventory) {}
-
-
+const bookForm = document.querySelector('#book-form')
 const newBookBtn = document.querySelector('#toggleForm')
 newBookBtn.addEventListener('click', (event) => {
+  console.log(event.target)
   const form = document.querySelector('#book-form')
   if (form.className === 'collapsed') {
     form.classList.remove('collapsed')
@@ -89,7 +85,7 @@ newBookBtn.addEventListener('click', (event) => {
 })
 
 
-const bookForm = document.querySelector('#book-form')
+
 bookForm.addEventListener('submit', (event) => {
   event.preventDefault()
   const title = document.querySelector('#form-title')
