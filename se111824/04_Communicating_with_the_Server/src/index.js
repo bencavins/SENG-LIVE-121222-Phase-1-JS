@@ -1,12 +1,3 @@
-fetch('http://localhost:4444/books')
-    .then((resp) => resp.json())
-    .then((books) => {
-        console.log(books)
-        books.forEach(renderBook)
-    })
-    .catch((event) => console.log(event))
-
-
 function formatPrice(price) {
   return '$' + Number.parseFloat(price).toFixed(2);
 }
@@ -42,7 +33,6 @@ function renderBook(book) {
   
   const h3 = document.createElement('h3');
   h3.textContent = book.title;
-  console.log(book.Title)
 
   const pAuthor = document.createElement('p');
   pAuthor.textContent = book.author;
@@ -90,7 +80,6 @@ toggleBookFormBtn.addEventListener('click', (e) => {
 });
 
 // also hide the form when it's visible and the escape key is pressed
-
 window.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
     if (!bookForm.classList.contains('collapsed')) {
@@ -132,10 +121,18 @@ bookForm.addEventListener('submit', (e) => {
 ////////////////////////////////////////////
 // call render functions to populate the DOM
 ////////////////////////////////////////////
+// fetch('http://localhost:4000/books')
+//   .then((resp) => resp.json())
+//   .then((books) => {
+//       for (let book of books) {
+//         renderBook(book)
+//       }
+//   })
+//   .catch((event) => console.log(event))
 
-renderHeader(bookStore)
-renderFooter(bookStore)
-// bookStore.inventory.forEach(renderBook)
-
-
-
+// fetch('http://localhost:4000/stores/1')
+//   .then((resp) => resp.json())
+//   .then((store) => {
+//     renderHeader(store)
+//     renderFooter(store)
+//   })
