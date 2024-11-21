@@ -20,7 +20,7 @@ function renderStoreSelectionOptions(stores) {
   stores.forEach(addSelectOptionForStore)
   // add a listener so that when the selection changes, we fetch that store's data from the server and load it into the DOM
   storeSelector.addEventListener('change', (e) => {
-    getJSON(`http://localhost:3000/stores/${e.target.value}`)
+    getJSON(`http://localhost:4000/stores/${e.target.value}`)
       .then(store => {
         renderHeader(store);
         renderFooter(store);
@@ -180,21 +180,25 @@ bookForm.addEventListener('submit', (e) => {
 
 // Invoking functions    
 // fetching our data!
-getJSON('http://localhost:3000/stores')
-  .then((stores) => {
-    // this populates a select tag with options so we can switch between stores on our web page
-    renderStoreSelectionOptions(stores);
-    renderHeader(stores[0])
-    renderFooter(stores[0])
-  })
+fetch('http://localhost:4000/stores')  // send the request
+.then((resp) => resp.json())  // get the json data from the request
+.then((stores) => {
+  // do something with the data
+  renderStoreSelectionOptions(stores)
+  renderHeader(stores[0])
+  renderFooter(stores[0])
+})
   .catch(err => {
     console.error(err);
     // renderError('Make sure to start json-server!') // I'm skipping this so we only see this error message once if JSON-server is actually not running
   });
 
 // load all the books and render them
-getJSON("http://localhost:3000/books")
-  .then((books) => {
-    books.forEach(book => renderBook(book))
-  })
-  .catch(renderError);
+fetch('http://localhost:4000/books')
+.then((resp) => resp.json())
+.then((books) => {
+  // loop over book objects
+  for (let book of books) {
+    renderBook(book)  // render book on the page
+  }
+})
