@@ -61,6 +61,13 @@ function renderBook(book) {
   li.append(h3, pAuthor, pPrice, img, btn);
 
   document.querySelector('#book-list').append(li);
+
+  li.addEventListener('mouseover', (event) => {
+    li.classList.add('red')
+  })
+  li.addEventListener('mouseout', (event) => {
+    li.classList.remove('red')
+  })
 }
 
 

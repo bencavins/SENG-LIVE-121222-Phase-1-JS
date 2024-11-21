@@ -1,3 +1,17 @@
+/*
+
+HTTP Request
+- verb: (GET, POST, PATCH, DELETE, etc)
+- url: http://localhost:4000/stores
+- headers: (more info about the request)
+
+HTTP Response:
+- status code: (200, 404, etc)
+- body: data
+*/
+
+
+
 function formatPrice(price) {
   return '$' + Number.parseFloat(price).toFixed(2);
 }
@@ -121,6 +135,27 @@ bookForm.addEventListener('submit', (e) => {
 ////////////////////////////////////////////
 // call render functions to populate the DOM
 ////////////////////////////////////////////
+fetch('http://localhost:4000/stores/1')  // send the request
+.then((resp) => resp.json())  // get the json data from the request
+.then((store) => {
+  console.log('in fetch')
+  // do something with the data
+  renderHeader(store)
+  renderFooter(store)
+})
+console.log('out fetch')
+
+fetch('http://localhost:4000/books')
+.then((resp) => resp.json())
+.then((books) => {
+  // loop over book objects
+  for (let book of books) {
+    renderBook(book)  // render book on the page
+  }
+})
+
+
+
 // fetch('http://localhost:4000/books')
 //   .then((resp) => resp.json())
 //   .then((books) => {

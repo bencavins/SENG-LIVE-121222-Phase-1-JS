@@ -28,7 +28,7 @@
   "books": [
     {
       "id": 1,
-      "title": "My New Title",
+      "title": "My Title",
       "author": "Marjin Haverbeke",
       "price": 10.00,
       "reviews": [
