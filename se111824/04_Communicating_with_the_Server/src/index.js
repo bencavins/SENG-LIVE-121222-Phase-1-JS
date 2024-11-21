@@ -135,6 +135,9 @@ bookForm.addEventListener('submit', (e) => {
 ////////////////////////////////////////////
 // call render functions to populate the DOM
 ////////////////////////////////////////////
+
+// fetch runs asynchronously (runs in the background)
+// we don't know when it will finish)
 fetch('http://localhost:4000/stores/1')  // send the request
 .then((resp) => resp.json())  // get the json data from the request
 .then((store) => {
@@ -153,21 +156,3 @@ fetch('http://localhost:4000/books')
     renderBook(book)  // render book on the page
   }
 })
-
-
-
-// fetch('http://localhost:4000/books')
-//   .then((resp) => resp.json())
-//   .then((books) => {
-//       for (let book of books) {
-//         renderBook(book)
-//       }
-//   })
-//   .catch((event) => console.log(event))
-
-// fetch('http://localhost:4000/stores/1')
-//   .then((resp) => resp.json())
-//   .then((store) => {
-//     renderHeader(store)
-//     renderFooter(store)
-//   })
