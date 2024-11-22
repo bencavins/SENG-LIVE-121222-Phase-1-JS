@@ -52,7 +52,7 @@ function renderBook(book) {
   const pPrice = document.createElement('p');
   pPrice.textContent = `${formatPrice(book.price)}`;
   
-  // convert this to an input
+  // TODO convert this to an input
   // add change handler
   // send patch request
   const pStock = document.createElement('p');
@@ -165,7 +165,7 @@ bookForm.addEventListener('submit', (e) => {
     renderBook(data)
   })
   .catch(error => {  // This only runs if there is an error in the fetch
-    document.querySelector('#error-message').textContent = 'POST book failed :('
+    renderError('Failed to POST new book')
   })
 
   e.target.reset();  // clear the inputs on the form
@@ -183,7 +183,7 @@ fetch('http://localhost:4000/stores')  // send the request
 })
   .catch(err => {
     console.error(err);
-    // renderError('Make sure to start json-server!') // I'm skipping this so we only see this error message once if JSON-server is actually not running
+    renderError('Make sure to start json-server!') // I'm skipping this so we only see this error message once if JSON-server is actually not running
   });
 
 // load all the books and render them
