@@ -55,15 +55,22 @@ function renderBook(book) {
   // TODO convert this to an input
   // add change handler
   // send patch request
-  const pStock = document.createElement('p');
-  pStock.className = "grey";
-  if (book.inventory === 0) {
-    pStock.textContent = "Out of stock";
-  } else if (book.inventory < 3) {
-    pStock.textContent = "Only a few left!";
-  } else {
-    pStock.textContent = "In stock"
-  }
+  const pStock = document.createElement('input');
+  pStock.type = 'number'
+  pStock.value = book.inventory
+  pStock.addEventListener('change', (event) => {
+    const newInventory = parseInt(event.target.value)
+    fetch(`http://localhost:4000/books/${book.id}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({'inventory': newInventory})
+    })
+    .then(resp => resp.json())
+    .then(data => console.log(data))
+    .catch(error => renderError('Error patching book'))
+  })
   
   const img = document.createElement('img');
   img.src = book.imageUrl;
@@ -74,6 +81,13 @@ function renderBook(book) {
 
   // TODO send a DELETE request when clicking a book
   btn.addEventListener('click', (e) => {
+    fetch(`http://localhost:4000/books/${book.id}`, {
+      method: 'DELETE'
+    })
+    .then(resp => resp.json())
+    .then(data => console.log(data))
+    .catch(error => renderError('Error deleting book'))
+
     li.remove();
   })
 
