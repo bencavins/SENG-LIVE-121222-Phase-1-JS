@@ -1,5 +1,4 @@
 // Rendering functions
-// Renders Header
 function renderHeader(bookStore) {
   document.querySelector('header h1').textContent = bookStore.name;
 }
@@ -20,11 +19,12 @@ function renderStoreSelectionOptions(stores) {
   stores.forEach(addSelectOptionForStore)
   // add a listener so that when the selection changes, we fetch that store's data from the server and load it into the DOM
   storeSelector.addEventListener('change', (e) => {
-    getJSON(`http://localhost:4000/stores/${e.target.value}`)
-      .then(store => {
-        renderHeader(store);
-        renderFooter(store);
-      })
+    fetch(`http://localhost:4000/stores/${e.target.value}`)
+    .then(resp => resp.json())
+    .then(store => {
+      renderHeader(store)
+      renderFooter(store)
+    })
   })
 }
 
@@ -39,19 +39,7 @@ function addSelectOptionForStore(store) {
   storeSelector.append(option);
 }
 
-// function: renderBook(book)
-// --------------------------
-// accepts a book object as an argument and creates
-// an li something like this:
-// <li class="list-li">
-//   <h3>Eloquent JavaScript</h3>
-//   <p>Marjin Haverbeke</p>
-//   <p>$10.00</p>
-//   <img src="https://images-na.ssl-images-amazon.com/images/I/51IKycqTPUL._SX218_BO1,204,203,200_QL40_FMwebp_.jpg" alt="Eloquent JavaScript cover"/>
-// </li>
-// appends the li to the ul#book-list in the DOM
 function renderBook(book) {
-    
   const li = document.createElement('li');
   li.className = 'list-li';
   
@@ -64,6 +52,9 @@ function renderBook(book) {
   const pPrice = document.createElement('p');
   pPrice.textContent = `${formatPrice(book.price)}`;
   
+  // convert this to an input
+  // add change handler
+  // send patch request
   const pStock = document.createElement('p');
   pStock.className = "grey";
   if (book.inventory === 0) {
@@ -81,6 +72,7 @@ function renderBook(book) {
   const btn = document.createElement('button');
   btn.textContent = 'Delete';
 
+  // TODO send a DELETE request when clicking a book
   btn.addEventListener('click', (e) => {
     li.remove();
   })
@@ -128,7 +120,6 @@ toggleStoreFormBtn.addEventListener('click', (e) => {
 });
 
 // also hide both form when they're visible and the escape key is pressed
-
 window.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
     if (!bookForm.classList.contains('collapsed')) {
@@ -142,21 +133,7 @@ window.addEventListener('keydown', (e) => {
   }
 })
 
-
-
-
-
-// this is what a book looks like in db.json
-// {
-//   id:1,
-//   title: 'Eloquent JavaScript: A Modern Introduction to Programming',
-//   author: 'Marjin Haverbeke',
-//   price: 10.00,
-//   reviews: [{userID: 1, content:'Good book, but not great for new coders'}],
-//   inventory: 10,
-//   imageUrl: 'https://images-na.ssl-images-amazon.com/images/I/51IKycqTPUL._SX218_BO1,204,203,200_QL40_FMwebp_.jpg'
-// }
-// we can use a book as an argument for renderBook!  This will add the book's info to the webpage.
+// event handler for book form
 bookForm.addEventListener('submit', (e) => { 
   e.preventDefault();  // prevent page from refreshing
   
@@ -173,7 +150,7 @@ bookForm.addEventListener('submit', (e) => {
   // assume the POST request will succeed, render the book regardless
   renderBook(newBook);
 
-  // 1. Add the ability to perist the book to the database when the form is submitted. When this works, we should still see the book that is added to the DOM on submission when we refresh the page.
+  // POST the new book to the database (json-server)
   fetch('http://localhost:4000/books', {
     method: 'POST',  // tell the server this is a POST request (need to create new data)
     headers: {
@@ -195,8 +172,7 @@ bookForm.addEventListener('submit', (e) => {
 })
 
 
-// Invoking functions    
-// fetching our data!
+// fetch the store data from the server and render it
 fetch('http://localhost:4000/stores')  // send the request
 .then((resp) => resp.json())  // get the json data from the request
 .then((stores) => {
