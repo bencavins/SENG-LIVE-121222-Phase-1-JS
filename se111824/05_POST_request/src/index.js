@@ -158,9 +158,9 @@ window.addEventListener('keydown', (e) => {
 // }
 // we can use a book as an argument for renderBook!  This will add the book's info to the webpage.
 bookForm.addEventListener('submit', (e) => { 
-  e.preventDefault();
-  // pull the info for the new book out of the form
-  const book = {
+  e.preventDefault();  // prevent page from refreshing
+  
+  const newBook = { // pull the info for the new book out of the form
     title: e.target.title.value,
     author: e.target.author.value,
     price: Number.parseFloat(e.target.price.value),
@@ -168,11 +168,30 @@ bookForm.addEventListener('submit', (e) => {
     inventory: Number(e.target.inventory.value),
     imageUrl: e.target.imageUrl.value
   }
-  // pass the info as an argument to renderBook for display!
-  renderBook(book);
-  // 1. Add the ability to perist the book to the database when the form is submitted. When this works, we should still see the book that is added to the DOM on submission when we refresh the page.
 
-  e.target.reset();
+  // optimisic rendering
+  // assume the POST request will succeed, render the book regardless
+  renderBook(newBook);
+
+  // 1. Add the ability to perist the book to the database when the form is submitted. When this works, we should still see the book that is added to the DOM on submission when we refresh the page.
+  fetch('http://localhost:4000/books', {
+    method: 'POST',  // tell the server this is a POST request (need to create new data)
+    headers: {
+      "Content-Type": "application/json"  // tell the server we are sending it JSON data
+    },
+    body: JSON.stringify(newBook)  // converting our newBook obj to text, setting the body of the request
+  })
+  .then((resp) => resp.json())
+  .then((data) => {
+    // pessimistic rendering
+    // wait for a success response from the server before rendering
+    renderBook(data)
+  })
+  .catch(error => {  // This only runs if there is an error in the fetch
+    document.querySelector('#error-message').textContent = 'POST book failed :('
+  })
+
+  e.target.reset();  // clear the inputs on the form
 })
 
 // 2. Hook up the new Store form so it that it works to add a new store to our database and also to the DOM (as an option within the select tag)
