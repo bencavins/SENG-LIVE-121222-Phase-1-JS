@@ -1,3 +1,8 @@
+// CRUD
+// Create, Read, Update, Delete
+
+
+
 // Rendering functions
 function renderHeader(bookStore) {
   document.querySelector('header h1').textContent = bookStore.name;
@@ -55,15 +60,25 @@ function renderBook(book) {
   // TODO convert this to an input
   // add change handler
   // send patch request
-  const pStock = document.createElement('p');
-  pStock.className = "grey";
-  if (book.inventory === 0) {
-    pStock.textContent = "Out of stock";
-  } else if (book.inventory < 3) {
-    pStock.textContent = "Only a few left!";
-  } else {
-    pStock.textContent = "In stock"
-  }
+  // const pStock = document.createElement('p');
+  // add a number input
+  const pStock = document.createElement('input')
+  pStock.type = 'number'
+  // set the input value to the book inventory count
+  pStock.value = book.inventory
+  // add a change event, send PATCH on every change
+  pStock.addEventListener('change', (event) => {
+    fetch(`http://localhost:4000/books/${book.id}`, {
+      method: 'PATCH',
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({"inventory": parseInt(event.target.value)})
+    })
+    .then(resp => resp.json())
+    .then(jsonData => console.log(jsonData))
+  })
+
   
   const img = document.createElement('img');
   img.src = book.imageUrl;
@@ -74,7 +89,15 @@ function renderBook(book) {
 
   // TODO send a DELETE request when clicking a book
   btn.addEventListener('click', (e) => {
+    // Remove book from the page
     li.remove();
+    // Send a DELETE request
+    // console.log(`deleting book with id ${book.id}`)
+    fetch(`http://localhost:4000/books/${book.id}`, {
+      method: 'DELETE'
+    })
+    .then(resp => resp.json())
+    .then(jsonData => console.log(jsonData))
   })
 
   li.append(h3, pAuthor, pPrice, pStock, img, btn);
