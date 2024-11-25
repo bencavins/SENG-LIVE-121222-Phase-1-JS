@@ -1,9 +1,13 @@
+// CRUD
+// Create, Read, Update, Delete
+
+
+
 // Rendering functions
-// Renders Header
-function renderHeader(store){
-  document.querySelector('h1').textContent = store.name
+function renderHeader(bookStore) {
+  document.querySelector('header h1').textContent = bookStore.name;
 }
-// Renders Footer
+
 function renderFooter(bookStore) {
   document.querySelector('#address').textContent = bookStore.address;
   document.querySelector('#number').textContent = bookStore.number;
@@ -20,11 +24,12 @@ function renderStoreSelectionOptions(stores) {
   stores.forEach(addSelectOptionForStore)
   // add a listener so that when the selection changes, we fetch that store's data from the server and load it into the DOM
   storeSelector.addEventListener('change', (e) => {
-    getJSON(`http://localhost:3000/stores/${e.target.value}`)
-      .then(store => {
-        renderHeader(store);
-        renderFooter(store);
-      })
+    fetch(`http://localhost:4000/stores/${e.target.value}`)
+    .then(resp => resp.json())
+    .then(store => {
+      renderHeader(store)
+      renderFooter(store)
+    })
   })
 }
 
@@ -39,17 +44,6 @@ function addSelectOptionForStore(store) {
   storeSelector.append(option);
 }
 
-// function: renderBook(book)
-// --------------------------
-// accepts a book object as an argument and creates
-// an li something like this:
-// <li class="list-li">
-//   <h3>Eloquent JavaScript</h3>
-//   <p>Marjin Haverbeke</p>
-//   <p>$10.00</p>
-//   <img src="https://images-na.ssl-images-amazon.com/images/I/51IKycqTPUL._SX218_BO1,204,203,200_QL40_FMwebp_.jpg" alt="Eloquent JavaScript cover"/>
-// </li>
-// appends the li to the ul#book-list in the DOM
 function renderBook(book) {
   const li = document.createElement('li');
   li.className = 'list-li';
@@ -61,23 +55,30 @@ function renderBook(book) {
   pAuthor.textContent = book.author;
   
   const pPrice = document.createElement('p');
-  pPrice.textContent = formatPrice(book.price);
-
-  const inventoryInput = document.createElement('input');
-  inventoryInput.type = 'number';
-  inventoryInput.className = 'inventory-input';
-  inventoryInput.value = book.inventory;
-  inventoryInput.min = 0;
+  pPrice.textContent = `${formatPrice(book.price)}`;
   
-  const pStock = document.createElement('p');
-  pStock.className = "grey";
-  if (book.inventory === 0) {
-    pStock.textContent = "Out of stock";
-  } else if (book.inventory < 3) {
-    pStock.textContent = "Only a few left!";
-  } else {
-    pStock.textContent = "In stock"
-  }
+  // TODO convert this to an input
+  // add change handler
+  // send patch request
+  // const pStock = document.createElement('p');
+  // add a number input
+  const pStock = document.createElement('input')
+  pStock.type = 'number'
+  // set the input value to the book inventory count
+  pStock.value = book.inventory
+  // add a change event, send PATCH on every change
+  pStock.addEventListener('change', (event) => {
+    fetch(`http://localhost:4000/books/${book.id}`, {
+      method: 'PATCH',
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({"inventory": parseInt(event.target.value)})
+    })
+    .then(resp => resp.json())
+    .then(jsonData => console.log(jsonData))
+  })
+
   
   const img = document.createElement('img');
   img.src = book.imageUrl;
@@ -86,11 +87,20 @@ function renderBook(book) {
   const btn = document.createElement('button');
   btn.textContent = 'Delete';
 
+  // TODO send a DELETE request when clicking a book
   btn.addEventListener('click', (e) => {
+    // Remove book from the page
     li.remove();
+    // Send a DELETE request
+    // console.log(`deleting book with id ${book.id}`)
+    fetch(`http://localhost:4000/books/${book.id}`, {
+      method: 'DELETE'
+    })
+    .then(resp => resp.json())
+    .then(jsonData => console.log(jsonData))
   })
 
-  li.append(h3, pAuthor, pPrice, inventoryInput, pStock, img, btn);
+  li.append(h3, pAuthor, pPrice, pStock, img, btn);
   document.querySelector('#book-list').append(li);
 }
 
@@ -111,172 +121,100 @@ function renderError(error) {
   })
 }
 
-// New Function to populate the store form with a store's data to update 
-function populateStoreEditForm(store) {
-  const form = document.querySelector('#store-form');
-  form.name.value = store.name;
-  form.location.value = store.location;
-  form.address.value = store.address;
-  form.number.value = store.number;
-  form.hours.value = store.hours;
-  showStoreForm();
-}
-
 function formatPrice(price) {
-  let formattedPrice = Number.parseFloat(price).toFixed(2);
-  return `$${formattedPrice}`;
+  return '$' + Number.parseFloat(price).toFixed(2);
 }
 
 // Event Handlers
-
-// Book Form button
-const toggleBookFormButton = document.querySelector('#toggleBookForm');
+const toggleBookFormBtn = document.querySelector('#toggleBookForm');
 const bookForm = document.querySelector('#book-form');
-let bookFormVisible = false;
-
-function toggleBookForm() {
-  if (bookFormVisible) {
-    hideBookForm();
-  } else {
-    showBookForm();
-  }
-}
-
-function showBookForm() {
-  bookFormVisible = true;
-  bookForm.classList.remove('collapsed');
-  toggleBookFormButton.textContent = "Hide Book form";
-}
-
-function hideBookForm() {
-  bookFormVisible = false;
-  bookForm.classList.add('collapsed');
-  toggleBookFormButton.textContent = "New Book";
-}
-
-toggleBookFormButton.addEventListener('click', toggleBookForm);
-
-// Store Form button
-const toggleStoreFormButton = document.querySelector('#toggleStoreForm');
+const toggleStoreFormBtn = document.querySelector('#toggleStoreForm');
 const storeForm = document.querySelector('#store-form');
-let storeFormVisible = false;
 
-function toggleStoreForm() {
-  if (storeFormVisible) {
-    hideStoreForm();
-  } else {
-    showStoreForm();
-  }
-}
+// hide and show the new book form when toggle buton is clicked
+toggleBookFormBtn.addEventListener('click', (e) => {
+  const formHidden = bookForm.classList.toggle('collapsed')
+  toggleBookFormBtn.textContent = formHidden ?  "New Book" : "Hide Book Form";
+});
 
-function hideStoreForm() {
-  document.querySelector('#store-form').classList.add('collapsed');
-  storeFormVisible = false;
-  storeEditMode = false;
-  storeForm.reset();
-  toggleStoreFormButton.textContent = "New Store";
-}
+toggleStoreFormBtn.addEventListener('click', (e) => {
+  const formHidden = storeForm.classList.toggle('collapsed');
+  toggleStoreFormBtn.textContent = formHidden ? " New Store" : "Hide Store Form";
+});
 
-function showStoreForm() {
-  document.querySelector('#store-form').classList.remove('collapsed');
-  storeFormVisible = true;
-  toggleStoreFormButton.textContent = "Hide Store form";
-  storeForm.querySelector('[type="submit"]').value = storeEditMode ? "SAVE STORE" : "ADD STORE";
-}
-
-toggleStoreFormButton.addEventListener('click', toggleStoreForm);
-
-// allow escape key to hide either form
+// also hide both form when they're visible and the escape key is pressed
 window.addEventListener('keydown', (e) => {
-  if (e.key === "Escape") {
-    hideStoreForm();
-    hideBookForm();
+  if (e.key === 'Escape') {
+    if (!bookForm.classList.contains('collapsed')) {
+      bookForm.classList.add('collapsed')
+      toggleBookFormBtn.textContent = "New Book";
+    };
+    if (!storeForm.classList.contains('collapsed')) {
+      storeForm.classList.add('collapsed')
+      toggleStoreFormBtn.textContent = "New Store";
+    };
   }
 })
 
-// book form submit
+// event handler for book form
 bookForm.addEventListener('submit', (e) => { 
-  e.preventDefault();
-  // pull the info for the new book out of the form
-  const book = {
+  e.preventDefault();  // prevent page from refreshing
+  
+  const newBook = { // pull the info for the new book out of the form
     title: e.target.title.value,
     author: e.target.author.value,
-    price: e.target.price.value,
+    price: Number.parseFloat(e.target.price.value),
     reviews: [],
     inventory: Number(e.target.inventory.value),
     imageUrl: e.target.imageUrl.value
   }
-    
-  // pessimistic rendering here:
-  postJSON("http://localhost:3000/books", book)
-    .then(book => {
-      renderBook(book)
-      e.target.reset();
-    })
-    .catch(renderError);  
-})
 
-// store form submit
+  // optimisic rendering
+  // assume the POST request will succeed, render the book regardless
+  renderBook(newBook);
 
-storeForm.addEventListener('submit', (e) => {
-  e.preventDefault();
-  // debugger;
-  const store = {};
-  store.name = e.target.name.value;
-  store.address = e.target.address.value;
-  store.number = e.target.number.value;
-  store.hours = e.target.hours.value;
-  store.location = e.target.location.value;
-  // {
-  //     "id": 1, // will be assigned by the database
-  //     "location": "Seattle",
-  //     "address": "333 st ne Seattle wa 99999",
-  //     "number": 9999999999,
-  //     "name": "Easley's Technical Books",
-  //     "hours": "Monday - Friday 9am - 6pm"
-  //   },
-  if (storeEditMode) {
-    // ✅ write code for updating the store here
-    
-    hideStoreForm()
-  } else {
-    postJSON("http://localhost:3000/stores", store)
-      .then(addSelectOptionForStore)
-      .catch(renderError);
-  }
-  e.target.reset();
-})
-
-// edit store button
-const editStoreBtn = document.querySelector('#edit-store');
-let storeEditMode = false;
-
-editStoreBtn.addEventListener('click', (e) => {
-  const selectedStoreId = document.querySelector('#store-selector').value;
-  storeEditMode = true;
-  getJSON(`http://localhost:3000/stores/${selectedStoreId}`)
-    .then(populateStoreEditForm)
-})
-
-////////////////////////////////
-// Communicating with the Server
-////////////////////////////////
-
-
-getJSON('http://localhost:3000/stores')
-  .then((stores) => {
-    // this populates a select tag with options so we can switch between stores on our web page
-    renderStoreSelectionOptions(stores);
-    renderHeader(stores[0])
-    renderFooter(stores[0])
+  // POST the new book to the database (json-server)
+  fetch('http://localhost:4000/books', {
+    method: 'POST',  // tell the server this is a POST request (need to create new data)
+    headers: {
+      "Content-Type": "application/json"  // tell the server we are sending it JSON data
+    },
+    body: JSON.stringify(newBook)  // converting our newBook obj to text, setting the body of the request
   })
+  .then((resp) => resp.json())
+  .then((data) => {
+    // pessimistic rendering
+    // wait for a success response from the server before rendering
+    renderBook(data)
+  })
+  .catch(error => {  // This only runs if there is an error in the fetch
+    renderError('Failed to POST new book')
+  })
+
+  e.target.reset();  // clear the inputs on the form
+})
+
+
+// fetch the store data from the server and render it
+fetch('http://localhost:4000/stores')  // send the request
+.then((resp) => resp.json())  // get the json data from the request
+.then((stores) => {
+  // do something with the data
+  renderStoreSelectionOptions(stores)
+  renderHeader(stores[0])
+  renderFooter(stores[0])
+})
   .catch(err => {
     console.error(err);
+    renderError('Make sure to start json-server!') // I'm skipping this so we only see this error message once if JSON-server is actually not running
   });
 
-getJSON('http://localhost:3000/books')
-  .then(books => books.forEach(renderBook))
-  .catch(err => {
-    console.error(err);
-    renderError('Make sure to start json-server!')
-  });
+// load all the books and render them
+fetch('http://localhost:4000/books')
+.then((resp) => resp.json())
+.then((books) => {
+  // loop over book objects
+  for (let book of books) {
+    renderBook(book)  // render book on the page
+  }
+})
